@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Abu Shujaa Pharmacy | Al Khalididiyah, Riyadh</title>
+<meta name="description" content="Abu Shujaa Pharmacy in Al Khalididiyah, Riyadh — prescription filling, over-the-counter medicine, cosmetics, and home delivery." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="#top">
+      <img src="assets/logo.jpg" alt="Abu Shujaa Pharmacy logo" />
+      <span class="brand-text">
+        <strong>Abu Shujaa Pharmacy</strong>
+        <span>Al Khalididiyah, Riyadh</span>
+      </span>
+    </a>
+    <nav class="main-nav" aria-label="Primary">
+      <a href="#services">Services</a>
+      <a href="#catalog">What's in stock</a>
+      <a href="#contact">Contact</a>
+    </nav>
+    <div class="header-cta">
+      <button class="cart-toggle" id="cart-toggle" aria-label="Open cart">
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="8" cy="21" r="1"></circle>
+          <circle cx="19" cy="21" r="1"></circle>
+          <path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"></path>
+        </svg>
+        <span class="cart-badge" id="cart-count">0</span>
+      </button>
+      <a class="btn btn-primary btn-small" data-wa-message="Assalamu alaikum, I'd like to ask about a product at Abu Shujaa Pharmacy." target="_blank" rel="noreferrer">
+        <span>Order on</span> WhatsApp
+      </a>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+
+  <section class="hero">
+    <div class="wrap">
+      <div class="hero-copy">
+        <h1>Health care, close to home in Al Khalididiyah.</h1>
+        <p class="hero-sub">
+          Abu Shujaa Pharmacy fills prescriptions, stocks everyday medicine and cosmetics,
+          and delivers across Riyadh — all a WhatsApp message away.
+        </p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" data-wa-message="Assalamu alaikum, I'd like to place an order at Abu Shujaa Pharmacy." target="_blank" rel="noreferrer">
+            Order on WhatsApp
+          </a>
+          <a class="btn btn-secondary" href="#catalog">See what's in stock</a>
+        </div>
+        <ul class="trust-list">
+          <li>Licensed pharmacists on every shift</li>
+          <li>Genuine medicines, always in date</li>
+          <li>Delivery across Al Khalididiyah &amp; Riyadh</li>
+        </ul>
+      </div>
+      <div class="hero-art">
+        <div class="blob" aria-hidden="true"></div>
+        <div class="logo-card">
+          <img src="assets/logo.jpg" alt="Abu Shujaa Pharmacy" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="services" id="services">
+    <div class="wrap">
+      <h2>What we handle for you</h2>
+      <div class="services-grid">
+        <div class="service-item">
+          <div class="icon" aria-hidden="true">℞</div>
+          <h3>Prescription filling</h3>
+          <p>Bring in your doctor's prescription and we'll prepare it while you wait.</p>
+        </div>
+        <div class="service-item">
+          <div class="icon" aria-hidden="true">+</div>
+          <h3>Over-the-counter medicine</h3>
+          <p>Pain relief, cold &amp; flu, digestive care, and other everyday essentials.</p>
+        </div>
+        <div class="service-item">
+          <div class="icon" aria-hidden="true">✦</div>
+          <h3>Cosmetics &amp; personal care</h3>
+          <p>Skincare, haircare, and grooming products from trusted brands.</p>
+        </div>
+        <div class="service-item">
+          <div class="icon" aria-hidden="true">→</div>
+          <h3>Home delivery</h3>
+          <p>Order what you need and we'll bring it to your door in Riyadh.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="catalog" id="catalog">
+    <div class="wrap">
+      <div class="catalog-head">
+        <div>
+          <h2>What's in stock</h2>
+          <p>
+            Our full shelf list — over a thousand items. Search by name or
+            filter by category to find what you need. Items marked
+            prescription-only need a valid prescription before we can dispense.
+          </p>
+        </div>
+      </div>
+
+      <div class="catalog-controls">
+        <div class="search-row">
+          <input id="search-input" type="text" placeholder="Search medicines, cosmetics, and more…" aria-label="Search products" />
+        </div>
+        <div class="filter-pills" role="group" aria-label="Filter by category">
+          <button class="filter-pill active" data-category="All">All</button>
+          <button class="filter-pill" data-category="Medicine">Medicine</button>
+          <button class="filter-pill" data-category="Cosmetics & Personal Care">Cosmetics &amp; Personal Care</button>
+          <button class="filter-pill" data-category="Baby & Family Care">Baby &amp; Family Care</button>
+          <button class="filter-pill" data-category="Vitamins & Supplements">Vitamins &amp; Supplements</button>
+          <button class="filter-pill" data-category="Medical Devices">Medical Devices</button>
+          <button class="filter-pill" data-category="General">General</button>
+        </div>
+      </div>
+
+      <div class="product-grid" id="product-grid"></div>
+      <p class="empty-state" id="empty-state" style="display:none;">No products match your search — try a different term or category.</p>
+      <div class="load-more-wrap" id="load-more-wrap" style="display:none;">
+        <button class="btn btn-secondary" id="load-more">Show more products</button>
+        <p class="results-count" id="results-count"></p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="contact" id="contact">
+  <div class="wrap">
+    <div>
+      <h2>Visit or reach us</h2>
+      <p>We're in Al Khalididiyah, Riyadh. For anything you can't find in the list above, just send us a message.</p>
+      <div class="contact-details">
+        <div>
+          <div>
+            <strong>Address</strong>
+            <span>Al Khalididiyah, Riyadh, Saudi Arabia</span>
+          </div>
+        </div>
+        <div>
+          <div>
+            <strong>WhatsApp</strong>
+            <span>+966 57 120 8336</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="contact-card">
+      <h3>Need something delivered?</h3>
+      <p>Message us your list and your address in Riyadh — we'll confirm price and delivery time on WhatsApp.</p>
+      <a class="btn btn-primary" data-wa-message="Assalamu alaikum, I'd like to order for delivery from Abu Shujaa Pharmacy." target="_blank" rel="noreferrer">
+        Message us on WhatsApp
+      </a>
+    </div>
+  </div>
+  <div class="wrap footer-bottom">
+    <span>© <span id="year"></span> Abu Shujaa Pharmacy. All rights reserved.</span>
+    <span>Al Khalididiyah, Riyadh</span>
+  </div>
+</footer>
+
+<a class="wa-float" data-wa-message="Assalamu alaikum, I'd like to ask about Abu Shujaa Pharmacy." target="_blank" rel="noreferrer" aria-label="Chat with us on WhatsApp">
+  <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"></path>
+  </svg>
+</a>
+
+<div class="cart-overlay" id="cart-overlay"></div>
+<aside class="cart-drawer" id="cart-drawer" aria-label="Shopping cart">
+  <div class="cart-drawer-head">
+    <h3>Your cart</h3>
+    <button class="cart-close" id="cart-close" aria-label="Close cart">✕</button>
+  </div>
+  <div class="cart-body" id="cart-body"></div>
+  <div class="cart-footer" id="cart-footer" style="display:none;">
+    <div class="cart-total-row">
+      <span>Total</span>
+      <strong id="cart-total">0.00 SAR</strong>
+    </div>
+    <button class="btn btn-primary" id="cart-checkout" style="width:100%; justify-content:center;">
+      Checkout on WhatsApp
+    </button>
+    <p class="cart-note">You'll confirm your address and delivery time on WhatsApp after sending your order.</p>
+  </div>
+</aside>
+
+<script src="products.js"></script>
+<script src="script.js"></script>
+<script>document.getElementById("year").textContent = new Date().getFullYear();</script>
+</body>
+</html>
