@@ -24,4 +24,4 @@
 const PRODUCTS = [
   
   { name: "Accu Chek Instant Glucometer", category: "Medical Devices", price: 200.0, 
-discount: 0, info: "", rx: false, qty: 3, image:"assets/products/Accu Chek Instant Glucometer.png" }
+discount: 0, info: "", rx: false, qty: 3, image:"assets/products/Accu Chek Instant Glucometer.png"}
