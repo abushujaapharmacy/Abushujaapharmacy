@@ -8,8 +8,10 @@
   1. Go to sheets.google.com, create a new blank spreadsheet.
   2. Rename "Sheet1" to "Inventory" (bottom tab).
   3. In row 1, add these exact column headers, one per cell:
-     A1: Barcode   B1: Name   C1: Category   D1: Price
-     E1: Discount  F1: Qty    G1: UpdatedAt
+     A1: Barcode   B1: Name     C1: Category  D1: Price
+     E1: Discount  F1: Qty      G1: UpdatedAt H1: Info
+     I1: Rx        J1: Image
+     (Rx = TRUE/FALSE. Image = optional path like assets/products/1.jpg)
   4. In the Sheet menu: Extensions -> Apps Script.
   5. Delete any starter code in the editor, paste this entire file instead.
   6. Change SECRET_KEY below to your own private word/phrase (not "changeme").
@@ -60,12 +62,24 @@ function doGet(e) {
     const found = findRowByBarcode(sheet, barcode);
     if (!found) return jsonResponse({ ok: true, found: false });
 
-    const [Barcode, Name, Category, Price, Discount, Qty, UpdatedAt] = found.row;
+    const [Barcode, Name, Category, Price, Discount, Qty, UpdatedAt, Info, Rx, Image] = found.row;
     return jsonResponse({
       ok: true,
       found: true,
-      product: { barcode: Barcode, name: Name, category: Category, price: Price, discount: Discount, qty: Qty, updatedAt: UpdatedAt }
+      product: { barcode: Barcode, name: Name, category: Category, price: Price, discount: Discount, qty: Qty, updatedAt: UpdatedAt, info: Info, rx: Rx, image: Image }
     });
+  }
+
+  // Full inventory export, used by the GitHub Action to rebuild products.js
+  if (action === "export") {
+    const data = sheet.getDataRange().getValues();
+    const products = [];
+    for (let i = 1; i < data.length; i++) {
+      const [Barcode, Name, Category, Price, Discount, Qty, UpdatedAt, Info, Rx, Image] = data[i];
+      if (!Name) continue; // skip blank rows
+      products.push({ barcode: Barcode, name: Name, category: Category, price: Price, discount: Discount || 0, qty: Qty || 0, info: Info || "", rx: Rx === true || Rx === "true" || Rx === "TRUE", image: Image || "" });
+    }
+    return jsonResponse({ ok: true, products: products });
   }
 
   return jsonResponse({ ok: false, error: "unknown action" });
@@ -110,7 +124,10 @@ function doPost(e) {
       payload.price,
       payload.discount || 0,
       payload.qty,
-      now
+      now,
+      payload.info || "",
+      payload.rx === true || payload.rx === "true",
+      payload.image || ""
     ]);
 
     return jsonResponse({ ok: true, added: true });
