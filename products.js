@@ -22,8 +22,8 @@
 */
 
 const PRODUCTS = [
-  { id: 786, name: "Panadol Extra", category: "General", price: 7.72, discount: 0, info: "", rx: false, qty: 50,
+  { id: 786, name: "Panadol Extra", category: "General", price: 8, discount: 0, info: "", rx: false, qty: 50,
   image:"assets/products/Panadol Extra.jpg"},
-  { id: 788, name: "Panadol Sinus", category: "General", price: 13.02, discount: 0, info: "", rx: false, qty: 5,
+  { id: 788, name: "Panadol Sinus", category: "General", price: 16.05, discount: 0, info: "", rx: false, qty: 5,
   image:"assets/products/Panadol Sinus.png"},
 ];
