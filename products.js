@@ -22,7 +22,5 @@
 */
 
 const PRODUCTS = [
-  
-  { name: "Accu Chek Instant Glucometer", category: "Medical Devices", price: 200.0, 
-discount: 0, info: "", rx: false, qty: 3, image:"assets/products/Accu Chek Instant Glucometer.png"},
+  { id: 786, name: "Panadol Extra", category: "General", price: 7.72, discount: 0, info: "", rx: false, qty: 50 },
 ];
