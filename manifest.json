@@ -1,0 +1,33 @@
+{
+  "name": "Abu Shujaa Pharmacy",
+  "short_name": "Abu Shujaa",
+  "description": "Order medicine, cosmetics, and essentials from Abu Shujaa Pharmacy in Al Khalididiyah, Riyadh.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F5FAF7",
+  "theme_color": "#1F9A52",
+  "lang": "en",
+  "dir": "ltr",
+  "icons": [
+    {
+      "src": "assets/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/icons/icon-512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
