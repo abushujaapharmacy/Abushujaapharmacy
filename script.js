@@ -3,7 +3,7 @@
 // with search + category filtering, a shopping cart, a combined
 // WhatsApp checkout message, and multi-language support (EN/AR/UR/BN).
 
-const WHATSAPP_NUMBER = "966571208336"; // international format, no + or spaces
+const WHATSAPP_NUMBER = "966571075624"; // international format, no + or spaces
 const CART_KEY = "abu-shujaa-cart";
 const LANG_KEY = "abu-shujaa-lang";
 const RTL_LANGS = ["ar", "ur"];
