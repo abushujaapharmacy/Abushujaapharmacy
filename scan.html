@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Inventory Scanner — Abu Shujaa Pharmacy (Staff)</title>
+<meta name="robots" content="noindex, nofollow" />
+<style>
+  :root {
+    --ink: #12261F; --ink-soft: #40554C; --paper: #F5FAF7; --white: #FFFFFF;
+    --green-700: #146A3B; --green-500: #1F9A52; --green-100: #E4F6EA;
+    --amber-500: #DB8E2E; --line: #DCE8E1;
+    --font: "Inter", -apple-system, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; font-family: var(--font); background: var(--paper); color: var(--ink);
+    min-height: 100vh; display: flex; flex-direction: column;
+  }
+  header {
+    padding: 18px 20px; background: var(--white); border-bottom: 1px solid var(--line);
+    font-weight: 700; display: flex; align-items: center; justify-content: space-between;
+  }
+  header span.tag { font-size: 0.7rem; background: var(--amber-500); color: var(--white); padding: 3px 9px; border-radius: 999px; font-weight: 600; }
+  main { flex: 1; padding: 20px; max-width: 480px; margin: 0 auto; width: 100%; }
+
+  .pin-screen { text-align: center; padding-top: 60px; }
+  .pin-screen input {
+    font-size: 1.5rem; text-align: center; letter-spacing: 8px; padding: 14px;
+    border-radius: 10px; border: 1px solid var(--line); width: 180px; margin-top: 20px;
+  }
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    padding: 13px 22px; border-radius: 999px; font-weight: 600; font-size: 0.95rem;
+    border: none; cursor: pointer; font-family: inherit;
+  }
+  .btn-primary { background: var(--green-500); color: var(--white); }
+  .btn-primary:hover { background: var(--green-700); }
+  .btn-secondary { background: var(--white); color: var(--ink); border: 1px solid var(--line); }
+  .btn-block { width: 100%; margin-top: 14px; }
+
+  #reader { width: 100%; border-radius: 14px; overflow: hidden; margin-top: 16px; }
+
+  .card {
+    background: var(--white); border: 1px solid var(--line); border-radius: 14px;
+    padding: 20px; margin-top: 18px;
+  }
+  .card h3 { margin: 0 0 4px; }
+  .card .barcode { font-size: 0.8rem; color: var(--ink-soft); margin-bottom: 14px; }
+  .field { margin-top: 12px; }
+  .field label { display: block; font-size: 0.82rem; color: var(--ink-soft); margin-bottom: 6px; }
+  .field input, .field select {
+    width: 100%; padding: 11px 12px; border-radius: 8px; border: 1px solid var(--line);
+    font-family: inherit; font-size: 0.95rem;
+  }
+  .qty-row { display: flex; align-items: center; gap: 12px; margin-top: 12px; }
+  .qty-row button {
+    width: 42px; height: 42px; border-radius: 10px; border: 1px solid var(--line);
+    background: var(--white); font-size: 1.3rem; cursor: pointer;
+  }
+  .qty-row input { flex: 1; text-align: center; font-size: 1.1rem; padding: 10px; border-radius: 8px; border: 1px solid var(--line); }
+
+  .status { margin-top: 14px; font-size: 0.88rem; padding: 10px 12px; border-radius: 8px; }
+  .status.success { background: var(--green-100); color: var(--green-700); }
+  .status.error { background: #FBEAEA; color: #B3261E; }
+
+  .manual-entry { margin-top: 20px; }
+  .manual-entry summary { cursor: pointer; font-size: 0.88rem; color: var(--ink-soft); }
+  .manual-entry input { margin-top: 10px; }
+
+  .hidden { display: none; }
+</style>
+</head>
+<body>
+
+<header>
+  Abu Shujaa Pharmacy
+  <span class="tag">STAFF — SCANNER</span>
+</header>
+
+<main>
+
+  <!-- PIN GATE -->
+  <div id="pin-screen" class="pin-screen">
+    <h2>Staff Access</h2>
+    <p>Enter PIN to use the inventory scanner.</p>
+    <input id="pin-input" type="password" inputmode="numeric" maxlength="4" placeholder="••••" />
+    <br />
+    <button class="btn btn-primary btn-block" id="pin-submit">Unlock</button>
+    <p id="pin-error" class="status error hidden">Incorrect PIN.</p>
+  </div>
+
+  <!-- SCANNER UI -->
+  <div id="scanner-screen" class="hidden">
+    <button class="btn btn-primary btn-block" id="start-scan">Start Scanning</button>
+    <div id="reader"></div>
+
+    <details class="manual-entry">
+      <summary>Enter barcode manually instead</summary>
+      <input id="manual-barcode" type="text" placeholder="Type barcode number" />
+      <button class="btn btn-secondary btn-block" id="manual-lookup">Look Up</button>
+    </details>
+
+    <div id="result" class="hidden"></div>
+    <div id="status-box"></div>
+  </div>
+
+</main>
+
+<script>
+  // ---- CONFIG: fill these in after deploying Code.gs as a Web App ----
+  const SCRIPT_URL = "PASTE_YOUR_APPS_SCRIPT_WEB_APP_URL_HERE";
+  const SECRET_KEY = "changeme"; // must match SECRET_KEY in Code.gs
+  const STAFF_PIN = "1234"; // change this before giving staff access
+  // ----------------------------------------------------------------
+
+  const CATEGORIES = ["Medicine", "Cosmetics & Personal Care", "Baby & Family Care", "Vitamins & Supplements", "Medical Devices", "General"];
+
+  // PIN gate
+  document.getElementById("pin-submit").addEventListener("click", checkPin);
+  document.getElementById("pin-input").addEventListener("keydown", (e) => { if (e.key === "Enter") checkPin(); });
+
+  function checkPin() {
+    const val = document.getElementById("pin-input").value;
+    if (val === STAFF_PIN) {
+      sessionStorage.setItem("scanner-unlocked", "1");
+      document.getElementById("pin-screen").classList.add("hidden");
+      document.getElementById("scanner-screen").classList.remove("hidden");
+    } else {
+      document.getElementById("pin-error").classList.remove("hidden");
+    }
+  }
+
+  if (sessionStorage.getItem("scanner-unlocked") === "1") {
+    document.getElementById("pin-screen").classList.add("hidden");
+    document.getElementById("scanner-screen").classList.remove("hidden");
+  }
+
+  // Scanner
+  let html5QrCode;
+
+  document.getElementById("start-scan").addEventListener("click", startScanning);
+
+  // Saudi medicine packaging uses GS1 DataMatrix codes (SFDA track-and-trace),
+  // not plain barcodes. These encode GTIN + Serial Number + Lot + Expiry
+  // together — and the Serial Number is unique per box, so two boxes of the
+  // same medicine scan as different text. We pull out just the GTIN (the
+  // part after AI "01", always 14 digits) since that's the stable,
+  // product-level code to match inventory against.
+  function extractProductCode(decodedText) {
+    const gs1Match = decodedText.match(/01(\d{14})/);
+    if (gs1Match) return gs1Match[1]; // GTIN-14 from a GS1 DataMatrix
+    const digitsOnly = decodedText.replace(/\D/g, "");
+    if (digitsOnly.length >= 8) return digitsOnly; // plain UPC/EAN barcode
+    return decodedText.trim(); // fallback: use whatever was scanned
+  }
+
+  function startScanning() {
+    document.getElementById("reader").innerHTML = "";
+    html5QrCode = new Html5Qrcode("reader", {
+      formatsToSupport: [
+        Html5QrcodeSupportedFormats.DATA_MATRIX,
+        Html5QrcodeSupportedFormats.QR_CODE,
+        Html5QrcodeSupportedFormats.EAN_13,
+        Html5QrcodeSupportedFormats.EAN_8,
+        Html5QrcodeSupportedFormats.UPC_A,
+        Html5QrcodeSupportedFormats.CODE_128
+      ],
+      verbose: false
+    });
+    html5QrCode.start(
+      { facingMode: "environment" },
+      { fps: 10, qrbox: { width: 250, height: 250 } },
+      (decodedText) => {
+        html5QrCode.stop().then(() => {
+          const code = extractProductCode(decodedText);
+          lookupProduct(code, decodedText);
+        });
+      },
+      () => {} // ignore per-frame scan failures
+    ).catch((err) => {
+      showStatus("Camera error: " + err + ". Try manual entry below.", "error");
+    });
+  }
+
+  document.getElementById("manual-lookup").addEventListener("click", () => {
+    const code = document.getElementById("manual-barcode").value.trim();
+    if (code) lookupProduct(code);
+  });
+
+  function showStatus(msg, type) {
+    const box = document.getElementById("status-box");
+    box.innerHTML = `<p class="status ${type}">${msg}</p>`;
+  }
+
+  function apiGet(params) {
+    const url = new URL(SCRIPT_URL);
+    Object.entries(params).forEach(([k, v]) => url.searchParams.set(k, v));
+    return fetch(url).then((r) => r.json());
+  }
+
+  function apiPost(body) {
+    return fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify(body) }).then((r) => r.json());
+  }
+
+  function lookupProduct(barcode, rawScan) {
+    showStatus("Looking up " + barcode + "…", "success");
+    apiGet({ action: "lookup", barcode, key: SECRET_KEY })
+      .then((res) => {
+        if (!res.ok) { showStatus("Error: " + res.error, "error"); return; }
+        if (res.found) {
+          renderExisting(barcode, res.product, rawScan);
+        } else {
+          renderNewProductForm(barcode, rawScan);
+        }
+        document.getElementById("status-box").innerHTML = "";
+      })
+      .catch(() => showStatus("Network error — check your connection.", "error"));
+  }
+
+  function renderExisting(barcode, p, rawScan) {
+    const result = document.getElementById("result");
+    result.classList.remove("hidden");
+    const rawLine = rawScan && rawScan !== barcode ? `<div class="barcode">Raw scan: ${rawScan}</div>` : "";
+    result.innerHTML = `
+      <div class="card">
+        <h3>${p.name}</h3>
+        <div class="barcode">GTIN: ${barcode} · ${p.category}</div>
+        ${rawLine}
+        <div class="field">
+          <label>Price (SAR)</label>
+          <input id="f-price" type="number" step="0.01" value="${p.price}" />
+        </div>
+        <div class="field">
+          <label>Discount (%)</label>
+          <input id="f-discount" type="number" value="${p.discount || 0}" />
+        </div>
+        <div class="field">
+          <label>Quantity in stock</label>
+          <div class="qty-row">
+            <button type="button" id="qty-minus">–</button>
+            <input id="f-qty" type="number" value="${p.qty}" />
+            <button type="button" id="qty-plus">+</button>
+          </div>
+        </div>
+        <button class="btn btn-primary btn-block" id="save-update">Save Update</button>
+        <button class="btn btn-secondary btn-block" id="scan-next">Scan Next Item</button>
+      </div>
+    `;
+    document.getElementById("qty-plus").onclick = () => bump("f-qty", 1);
+    document.getElementById("qty-minus").onclick = () => bump("f-qty", -1);
+    document.getElementById("save-update").onclick = () => {
+      const payload = {
+        key: SECRET_KEY, action: "update", barcode,
+        price: parseFloat(document.getElementById("f-price").value),
+        discount: parseFloat(document.getElementById("f-discount").value) || 0,
+        qty: parseInt(document.getElementById("f-qty").value, 10)
+      };
+      apiPost(payload).then((res) => {
+        if (res.ok) { showStatus("Saved — " + p.name + " updated.", "success"); resetForNext(); }
+        else showStatus("Error: " + res.error, "error");
+      });
+    };
+    document.getElementById("scan-next").onclick = resetForNext;
+  }
+
+  function renderNewProductForm(barcode, rawScan) {
+    const result = document.getElementById("result");
+    result.classList.remove("hidden");
+    const options = CATEGORIES.map((c) => `<option value="${c}">${c}</option>`).join("");
+    const rawLine = rawScan && rawScan !== barcode ? `<div class="barcode">Raw scan: ${rawScan}</div>` : "";
+    result.innerHTML = `
+      <div class="card">
+        <h3>New product</h3>
+        <div class="barcode">GTIN not found: ${barcode}</div>
+        ${rawLine}
+        <div class="field"><label>Name</label><input id="n-name" type="text" placeholder="Product name" /></div>
+        <div class="field"><label>Category</label><select id="n-category">${options}</select></div>
+        <div class="field"><label>Price (SAR)</label><input id="n-price" type="number" step="0.01" /></div>
+        <div class="field"><label>Quantity</label><input id="n-qty" type="number" value="1" /></div>
+        <div class="field"><label>Info (optional, short)</label><input id="n-info" type="text" placeholder="e.g. Pain relief tablets" /></div>
+        <div class="field" style="display:flex; align-items:center; gap:10px;">
+          <input id="n-rx" type="checkbox" style="width:auto;" />
+          <label style="margin:0;" for="n-rx">Prescription required</label>
+        </div>
+        <button class="btn btn-primary btn-block" id="add-product">Add Product</button>
+        <button class="btn btn-secondary btn-block" id="scan-next-new">Cancel / Scan Next</button>
+      </div>
+    `;
+    document.getElementById("add-product").onclick = () => {
+      const payload = {
+        key: SECRET_KEY, action: "add", barcode,
+        name: document.getElementById("n-name").value.trim(),
+        category: document.getElementById("n-category").value,
+        price: parseFloat(document.getElementById("n-price").value) || 0,
+        discount: 0,
+        qty: parseInt(document.getElementById("n-qty").value, 10) || 0,
+        info: document.getElementById("n-info").value.trim(),
+        rx: document.getElementById("n-rx").checked
+      };
+      if (!payload.name || !payload.price) { showStatus("Name and price are required.", "error"); return; }
+      apiPost(payload).then((res) => {
+        if (res.ok) { showStatus("Added — " + payload.name + ".", "success"); resetForNext(); }
+        else showStatus("Error: " + res.error, "error");
+      });
+    };
+    document.getElementById("scan-next-new").onclick = resetForNext;
+  }
+
+  function bump(id, delta) {
+    const el = document.getElementById(id);
+    el.value = Math.max(0, parseInt(el.value || "0", 10) + delta);
+  }
+
+  function resetForNext() {
+    document.getElementById("result").classList.add("hidden");
+    document.getElementById("result").innerHTML = "";
+    document.getElementById("manual-barcode").value = "";
+  }
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+</body>
+</html>
