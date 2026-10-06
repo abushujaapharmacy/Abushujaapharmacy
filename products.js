@@ -32,7 +32,7 @@
 
 const PRODUCTS = [
   { id: 1, name: "Antilice Comb", category: "Cosmetics & Personal Care", price: 8.0, discount: 0, info: "", rx: false, qty: 1 },
-  { id: 2, name: "Baby Comb", category: "Baby & Family Care", price: 5.0, discount: 0, info: "", rx: false, qty: 1 },
+  /*{ id: 2, name: "Baby Comb", category: "Baby & Family Care", price: 5.0, discount: 0, info: "", rx: false, qty: 1 },
   { id: 3, name: "Kiko S/silicon Pacifer", category: "Baby & Family Care", price: 13.0, discount: 0, info: "", rx: false, qty: 1 },
   { id: 4, name: "Babyzone Pacifer", category: "Baby & Family Care", price: 6.0, discount: 0, info: "", rx: false, qty: 6 },
   { id: 5, name: "Baby Zone Baby Pacifer", category: "Baby & Family Care", price: 6.0, discount: 0, info: "", rx: false, qty: 1 },
@@ -1109,5 +1109,5 @@ const PRODUCTS = [
   { id: 1076, name: "Zovirax 10GM Cream", category: "Medicine", price: 25.35, discount: 0, info: "", rx: false, qty: 4 },
   { id: 1077, name: "Zovirax 200MG", category: "Medicine", price: 74.4, discount: 0, info: "", rx: false, qty: 10 },
   { id: 1078, name: "Zovirax SYP", category: "Medicine", price: 75.3, discount: 0, info: "", rx: false, qty: 1 },
-  { id: 1079, name: "Zyrtec 10MG", category: "Medicine", price: 16.2, discount: 0, info: "", rx: false, qty: 8 },
+  { id: 1079, name: "Zyrtec 10MG", category: "Medicine", price: 16.2, discount: 0, info: "", rx: false, qty: 8 },*/
 ];
